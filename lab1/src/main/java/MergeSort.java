@@ -1,4 +1,4 @@
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Comparator;
 
 public class MergeSort {
@@ -6,44 +6,47 @@ public class MergeSort {
     private static int swapCounter;
     private static int comparatorCounter;
 
-    private static <K> void merge(K[] array1, K[] array2, K[] array, Comparator<K> comparator) {
+    private static <K> void merge(ArrayList<K> leftArray, ArrayList<K> rightArray, ArrayList<K> array, Comparator<K> comparator) {
 
         int i = 0, j = 0;
-        while (i + j < array.length) {
-            if (j == array2.length || (i < array1.length && comparator.compare(array1[i], array2[j]) < 0)) {
-                array[i + j] = array1[i++];
+        while (i + j < array.size()) {
+            if (j == rightArray.size() || (i < leftArray.size() && comparator.compare(leftArray.get(i), rightArray.get(j)) < 0)) {
+                array.set(i + j, leftArray.get(i++));
                 comparatorCounter++;
                 swapCounter++;
             } else {
-                array[i + j] = array2[j++];
+                array.set(i + j, rightArray.get(j++));
                 comparatorCounter++;
             }
         }
     }
 
-    private static <K> void mergeSort(K[] array, Comparator<K> comparator) {
-        int n = array.length;
+    private static <K> void merge(ArrayList<K> array, Comparator<K> comparator) {
+        int n = array.size();
         if (n < 2) {
             return;
         }
 
         int mid = n / 2;
-        K[] array1 = Arrays.copyOfRange(array, 0, mid);
-        K[] array2 = Arrays.copyOfRange(array, mid, n);
+        ArrayList<K> leftArray = new ArrayList<>(array.subList(0, mid));
+        ArrayList<K> rightArray = new ArrayList<>(array.subList(mid, n));
 
-        mergeSort(array1, comparator);
-        mergeSort(array2, comparator);
+        merge(leftArray, comparator);
+        merge(rightArray, comparator);
 
-        merge(array1, array2, array, comparator);
+        merge(leftArray, rightArray, array, comparator);
     }
 
-    public static <K> void finalMergeSort(K[] array, Comparator<K> comparator) {
+    public static <K> void mergeSort(ArrayList<K> array, Comparator<K> comparator) {
+        swapCounter = 0;
+        comparatorCounter = 0;
         long startTime = System.nanoTime();
 
-        mergeSort(array, comparator);
+        merge(array, comparator);
 
         long stopTime = System.nanoTime();
         long algoTime = stopTime - startTime;
+
         System.out.println("\nMerge sort:\nComparator Counter - " + comparatorCounter + "\nSwap Counter - " + swapCounter);
         System.out.println("Execution time - " + algoTime + " ns");
     }

@@ -1,4 +1,5 @@
 import java.io.FileReader;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Scanner;
 
@@ -10,7 +11,7 @@ public class Main {
         }
     }
 
-    private static <T> void printArray(T[] a) {
+    private static <T> void printArray(ArrayList<T> a) {
         for (T t : a) {
             System.out.println(t);
         }
@@ -18,8 +19,7 @@ public class Main {
 
     public static void main(String[] args) {
 
-        int i = 0;
-        TouristVoucher[] touristVouchers = new TouristVoucher[5];
+        ArrayList<TouristVoucher> touristVouchers = new ArrayList<>();
         Scanner scanner;
         try {
             String filePath = "D:\\Кєк\\структури даних і алго\\AlgoPractice\\lab1\\vouchers.txt";
@@ -28,9 +28,7 @@ public class Main {
                 String line = scanner.nextLine();
                 String[] fields = line.split(",");
 
-                touristVouchers[i] = new TouristVoucher(fields[0], Integer.parseInt(fields[1]), Integer.parseInt(fields[2]));
-
-                i++;
+                touristVouchers.add(new TouristVoucher(fields[0], Integer.parseInt(fields[1]), Integer.parseInt(fields[2])));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -42,7 +40,7 @@ public class Main {
         System.out.println("\nArray with the bubble sorting performed (descending by the voucher's duration):");
         printArray(touristVouchers);
 
-        MergeSort.finalMergeSort(touristVouchers, new PriceComparator());
+        MergeSort.mergeSort(touristVouchers, new PriceComparator());
         System.out.println("\nArray with the merge sorting performed (ascending by the voucher's price):");
         printArray(touristVouchers);
     }

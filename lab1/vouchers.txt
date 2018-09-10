@@ -3,3 +3,5 @@ Germany,1,5300
 England,3,1500
 France,7,3400
 Holland,6,2500
+Australia,4,10000
+Russia,5,600
