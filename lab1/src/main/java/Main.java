@@ -1,6 +1,7 @@
 import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Scanner;
 
 public class Main {
@@ -11,18 +12,17 @@ public class Main {
         }
     }
 
-    private static <T> void printArray(ArrayList<T> a) {
+    private static <T> void printArray(List<T> a) {
         for (T t : a) {
             System.out.println(t);
         }
     }
 
     public static void main(String[] args) {
-
-        ArrayList<TouristVoucher> touristVouchers = new ArrayList<>();
+        List<TouristVoucher> touristVouchers = new ArrayList<>();
         Scanner scanner;
         try {
-            String filePath = "D:\\Кєк\\структури даних і алго\\AlgoPractice\\lab1\\vouchers.txt";
+            String filePath = "vouchers.txt";
             scanner = new Scanner(new FileReader(filePath));
             while (scanner.hasNext()) {
                 String line = scanner.nextLine();

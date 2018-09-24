@@ -1,12 +1,13 @@
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
 
 public class MergeSort {
 
     private static int swapCounter;
     private static int comparatorCounter;
 
-    private static <K> void merge(ArrayList<K> leftArray, ArrayList<K> rightArray, ArrayList<K> array, Comparator<K> comparator) {
+    private static <K> void merge(List<K> leftArray, List<K> rightArray, List<K> array, Comparator<K> comparator) {
 
         int i = 0, j = 0;
         while (i + j < array.size()) {
@@ -21,15 +22,15 @@ public class MergeSort {
         }
     }
 
-    private static <K> void merge(ArrayList<K> array, Comparator<K> comparator) {
+    private static <K> void merge(List<K> array, Comparator<K> comparator) {
         int n = array.size();
         if (n < 2) {
             return;
         }
 
         int mid = n / 2;
-        ArrayList<K> leftArray = new ArrayList<>(array.subList(0, mid));
-        ArrayList<K> rightArray = new ArrayList<>(array.subList(mid, n));
+        List<K> leftArray = new ArrayList<>(array.subList(0, mid));
+        List<K> rightArray = new ArrayList<>(array.subList(mid, n));
 
         merge(leftArray, comparator);
         merge(rightArray, comparator);
@@ -37,7 +38,7 @@ public class MergeSort {
         merge(leftArray, rightArray, array, comparator);
     }
 
-    public static <K> void mergeSort(ArrayList<K> array, Comparator<K> comparator) {
+    public static <K> void mergeSort(List<K> array, Comparator<K> comparator) {
         swapCounter = 0;
         comparatorCounter = 0;
         long startTime = System.nanoTime();

@@ -4,15 +4,16 @@ import org.junit.jupiter.api.Test;
 
 import java.io.FileReader;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 import static hamster.Main.searchingForHamster;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class mainTest {
+class MainTest {
     private static int allFood = 0;
     private static int hamstersAmount = 0;
-    private static ArrayList<Hamster> hamsters = new ArrayList<>();
+    private static List<Hamster> hamsters = new ArrayList<>();
 
     private int hamsterTest(String filePath) {
         try {

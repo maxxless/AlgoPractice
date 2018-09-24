@@ -1,8 +1,8 @@
-import java.util.ArrayList;
+import java.util.List;
 
 public class BubbleSort {
 
-    public static void bubbleSortInDescOrder(ArrayList<TouristVoucher> a) {
+    public static void bubbleSortInDescOrder(List<TouristVoucher> a) {
         int left = 0;
         int right = a.size() - 1;
         int swapCounter = 0;
@@ -24,7 +24,7 @@ public class BubbleSort {
         System.out.println("Execution time - " + algoTime + " ns");
     }
 
-    private static void swap(ArrayList<TouristVoucher> a, int left, int right) {
+    private static void swap(List<TouristVoucher> a, int left, int right) {
         TouristVoucher temp = a.get(left);
         a.set(left, a.get(right));
         a.set(right, temp);
