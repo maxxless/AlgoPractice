@@ -42,6 +42,7 @@ class mainTest {
         assertEquals(hamsterTest("hamstr.in"), 2);
         assertEquals(hamsterTest("hamstr1.in"), 3);
         assertEquals(hamsterTest("hamstr2.in"), 1);
+//        assertEquals(hamsterTest("hamstr3.in"),9);
     }
 }
 

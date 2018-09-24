@@ -37,13 +37,13 @@ public class Main {
 
     private static void openFile() {
         try {
-            Scanner scanner = new Scanner(new FileReader("hamstr1.in"));
+            Scanner scanner = new Scanner(new FileReader("hamstr3.in"));
             while (scanner.hasNext()) {
                 String line = scanner.nextLine();
 
 
-                if (line.length() > 4) {
-                    String[] hamsterFields = line.split("--");
+                if (line.length() > 6) {
+                    String[] hamsterFields = line.split("-----");
                     hamsters.add(new Hamster(Integer.parseInt(hamsterFields[0]), Integer.parseInt(hamsterFields[1])));
                 } else {
                     String[] fields = line.split(",");
@@ -76,7 +76,7 @@ public class Main {
             maxAmount -= 1;
         }
 
-        return maxAmount;
+        return maxAmount+1;
     }
 
     private static int count(List<Hamster> hamsters, int maxAmount) {
@@ -103,57 +103,58 @@ public class Main {
 //    }
 
     private static void merge(List<Hamster> hamsters, int leftIndex, int midIndex, int rightIndex) {
-        int n1 = midIndex - leftIndex + 1;
-        int n2 = rightIndex - midIndex;
+        int leftArraySize = midIndex - leftIndex + 1;
+        int rightArraySize = rightIndex - midIndex;
 
         List<Hamster> leftArray = new ArrayList<>();
         List<Hamster> rightArray = new ArrayList<>();
 
-        for (int i = 0; i < n1; ++i)
-            leftArray.add(i, hamsters.get(leftIndex + i));
-        for (int j = 0; j < n2; ++j)
-            rightArray.add(j, hamsters.get(midIndex + 1 + j));
+        for (int leftTempIndex = 0; leftTempIndex < leftArraySize; ++leftTempIndex)
+            leftArray.add(leftTempIndex, hamsters.get(leftIndex + leftTempIndex));
+        for (int rightTempIndex = 0; rightTempIndex < rightArraySize; ++rightTempIndex)
+            rightArray.add(rightTempIndex, hamsters.get(midIndex + 1 + rightTempIndex));
 
-        int i = 0, j = 0;
-        int k = leftIndex;
+        int leftTempIndex = 0, rightTempIndex = 0;
+        int tempIndex = leftIndex;
 
-        searchingForHamster(leftArray, n1, allFood);
-        if (searchingForHamster(leftArray, n1, allFood) == leftArray.size()) {
-            searchingForHamster(rightArray, n2, allFood);
-        }
 
-        while (i < n1 && j < n2) {
-            if (leftArray.get(i).getGreed() <= rightArray.get(j).getGreed()) {
-                hamsters.set(k, leftArray.get(i));
-                i++;
+        while (leftTempIndex < leftArraySize && rightTempIndex < rightArraySize) {
+            if (leftArray.get(leftTempIndex).getGreed() <= rightArray.get(rightTempIndex).getGreed()) {
+                hamsters.set(tempIndex, leftArray.get(leftTempIndex));
+                leftTempIndex++;
             } else {
-                hamsters.set(k, rightArray.get(j));
-                j++;
+                hamsters.set(tempIndex, rightArray.get(rightTempIndex));
+                rightTempIndex++;
             }
-            k++;
+            tempIndex++;
         }
 
-        while (i < n1) {
-            hamsters.set(k, leftArray.get(i));
-            i++;
-            k++;
+        while (leftTempIndex < leftArraySize) {
+            hamsters.set(tempIndex, leftArray.get(leftTempIndex));
+            leftTempIndex++;
+            tempIndex++;
         }
 
-        while (j < n2) {
-            hamsters.set(k, rightArray.get(j));
-            j++;
-            k++;
+        while (rightTempIndex < rightArraySize) {
+            hamsters.set(tempIndex, rightArray.get(rightTempIndex));
+            rightTempIndex++;
+            tempIndex++;
+        }
+
+        searchingForHamster(leftArray, leftArraySize, allFood);
+        if (searchingForHamster(leftArray, leftArraySize, allFood) == leftArray.size()) {
+            searchingForHamster(rightArray, rightArraySize, allFood);
         }
     }
 
     private static void mergeSort(List<Hamster> hamsters, int leftIndex, int rightIndex) {
         if (leftIndex < rightIndex) {
-            int m = (leftIndex + rightIndex) / 2;
+            int middleIndex = (leftIndex + rightIndex) / 2;
 
-            mergeSort(hamsters, leftIndex, m);
-            mergeSort(hamsters, m + 1, rightIndex);
+            mergeSort(hamsters, leftIndex, middleIndex);
+            mergeSort(hamsters, middleIndex + 1, rightIndex);
 
-            merge(hamsters, leftIndex, m, rightIndex);
+            merge(hamsters, leftIndex, middleIndex, rightIndex);
         }
     }
 }
