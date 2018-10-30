@@ -2,10 +2,6 @@ package O_N2;
 
 import java.util.*;
 
-import static java.util.Comparator.comparingInt;
-import static java.util.stream.Collectors.collectingAndThen;
-import static java.util.stream.Collectors.toCollection;
-
 
 public class ConnectedComponents {
 
@@ -20,26 +16,71 @@ public class ConnectedComponents {
 
         System.out.println("Enter the edges: <from> <to>");
 
+        List<List<Integer>> pairs = new ArrayList<>();
+
         for (int i = 0; i < couplesNumber; i++) {
             vertexFrom = sc.nextInt();
             vertexTo = sc.nextInt();
 
-//            int finalVertexFrom = vertexFrom;
-//            int finalVertexTo = vertexTo;
-
-//            List<Object> newList = tribesList.stream()
-//                    .map(graph -> graph.vertexValue == (finalVertexFrom) ? graph.neighbors.add(new O_N2.DirectedGraphNode(finalVertexTo)) : graph)
-//                    .collect(Collectors.toList());
-
-            DirectedGraphNode directedGraphNodeFrom = new DirectedGraphNode(vertexFrom);
-            DirectedGraphNode directedGraphNodeTo = new DirectedGraphNode(vertexTo);
-
-            directedGraphNodeFrom.getNeighbors().add(directedGraphNodeTo);
-
-            tribesList.add(directedGraphNodeFrom);
-            tribesList.add(directedGraphNodeTo);
+            List<Integer> pair = new ArrayList<>();
+            pair.add(vertexFrom);
+            pair.add(vertexTo);
+            pairs.add(pair);
         }
         sc.close();
+
+        DirectedGraphNode firstDirectedGraphNodeFrom = new DirectedGraphNode(pairs.get(0).get(0));
+        DirectedGraphNode firstDirectedGraphNodeTo = new DirectedGraphNode(pairs.get(0).get(1));
+        firstDirectedGraphNodeFrom.getNeighbors().add(firstDirectedGraphNodeTo);
+        tribesList.add(firstDirectedGraphNodeFrom);
+
+        for (int i = 1; i < pairs.size(); i++) {
+            boolean isElementAdded = false;
+            int tribeListSizeTemporary = tribesList.size();
+            for (int j = 0; j < tribeListSizeTemporary; j++) {
+                if (tribesList.get(j).getVertexValue() == pairs.get(i).get(0)) {
+                    DirectedGraphNode directedGraphNodeTo = new DirectedGraphNode(pairs.get(i).get(1));
+
+                    tribesList.get(j).getNeighbors().add(directedGraphNodeTo);
+                    isElementAdded = true;
+                    break;
+                } else if (tribesList.get(j).getVertexValue() == pairs.get(i).get(1)) {
+                    DirectedGraphNode directedGraphNodeFrom = new DirectedGraphNode(pairs.get(i).get(0));
+
+                    tribesList.get(j).getNeighbors().add(directedGraphNodeFrom);
+                    isElementAdded = true;
+                    break;
+                }
+            }
+            if (!isElementAdded) {
+                DirectedGraphNode directedGraphNodeFrom = new DirectedGraphNode(pairs.get(i).get(0));
+                DirectedGraphNode directedGraphNodeTo = new DirectedGraphNode(pairs.get(i).get(1));
+
+                directedGraphNodeFrom.getNeighbors().add(directedGraphNodeTo);
+
+                tribesList.add(directedGraphNodeFrom);
+            }
+        }
+
+//        for (int k = 0; k < tribesList.size(); k++) {
+//            if (vertexFrom == tribesList.get(k).getVertexValue()) {
+//                DirectedGraphNode directedGraphNodeTo = new DirectedGraphNode(vertexTo);
+//
+//                tribesList.get(k).getNeighbors().add(directedGraphNodeTo);
+//            } else if (vertexTo == tribesList.get(k).getVertexValue()) {
+//                DirectedGraphNode directedGraphNodeFrom = new DirectedGraphNode(vertexTo);
+//
+//                tribesList.get(k).getNeighbors().add(directedGraphNodeFrom);
+//            } else {
+//                DirectedGraphNode directedGraphNodeFrom = new DirectedGraphNode(vertexFrom);
+//                DirectedGraphNode directedGraphNodeTo = new DirectedGraphNode(vertexTo);
+//
+//                directedGraphNodeFrom.getNeighbors().add(directedGraphNodeTo);
+//
+//                tribesList.add(directedGraphNodeFrom);
+//                tribesList.add(directedGraphNodeTo);
+//            }
+//        }
 
         return tribesList;
     }
@@ -51,12 +92,12 @@ public class ConnectedComponents {
         }
 
         // Maintain array with name for each element
-        Integer[] labels = new Integer[nodes.size()];
-        // Initially, set the labels of each element to itself
+        Integer[] values = new Integer[nodes.size()];
+        // Initially, set the values of each element to itself
         // Use HashMap to memorize the index
         Map<Integer, Integer> map = new HashMap<>();
-        for (int i = 0; i < labels.length; i++) {
-            labels[i] = nodes.get(i).getVertexValue();
+        for (int i = 0; i < values.length; i++) {
+            values[i] = nodes.get(i).getVertexValue();
             map.put(nodes.get(i).getVertexValue(), i);
         }
 
@@ -68,31 +109,31 @@ public class ConnectedComponents {
             int changerIdx = map.get(node.getVertexValue());
             for (DirectedGraphNode nbr : node.getNeighbors()) {
                 int changeIndex = map.get(nbr.getVertexValue());
-                Integer symbol = labels[changeIndex];
-                for (int i = 0; i < labels.length; i++) {
-                    if (labels[i].equals(symbol)) {
-                        labels[i] = labels[changerIdx];
+                Integer symbol = values[changeIndex];
+                for (int i = 0; i < values.length; i++) {
+                    if (values[i].equals(symbol)) {
+                        values[i] = values[changerIdx];
                     }
                 }
             }
         }
-        return createTribeList(labels, nodes);
+        return createTribeList(values, nodes);
     }
 
-    private static List<List<DirectedGraphNode>> createTribeList(Integer[] labels, List<DirectedGraphNode> nodes) {
+    private static List<List<DirectedGraphNode>> createTribeList(Integer[] values, List<DirectedGraphNode> nodes) {
         List<List<DirectedGraphNode>> res = new ArrayList<>();
-        if (labels == null || labels.length == 0) {
+        if (values == null || values.length == 0) {
             return res;
         }
 
         Map<Integer, List<DirectedGraphNode>> map = new HashMap<>();
-        for (int i = 0; i < labels.length; i++) {
-            if (!map.containsKey(labels[i])) {
+        for (int i = 0; i < values.length; i++) {
+            if (!map.containsKey(values[i])) {
                 List<DirectedGraphNode> tribe = new ArrayList<>();
                 tribe.add(nodes.get(i));
-                map.put(labels[i], tribe);
+                map.put(values[i], tribe);
             } else {
-                map.get(labels[i]).add(nodes.get(i));
+                map.get(values[i]).add(nodes.get(i));
             }
         }
 
@@ -106,16 +147,32 @@ public class ConnectedComponents {
 
     public static void main(String[] args) {
         int counter = 1;
+        int couplesNumber = 0;
 
-        List<DirectedGraphNode> tribes;
+        List<DirectedGraphNode> tribesList;
+        tribesList = readGraph();
 
-        tribes = readGraph();
 
-        List<DirectedGraphNode> unique = tribes.stream().sorted(Comparator.comparingInt(directedGraphNode -> directedGraphNode.getNeighbors().size()))
-                .collect(collectingAndThen(toCollection(() -> new TreeSet<>(comparingInt(DirectedGraphNode::getVertexValue))),
-                        ArrayList::new));
+//        Set<Integer> unique = new HashSet<>();
+//        List<Integer> indexesToDelete = new ArrayList<>();
+//
+//        for (int i = tribesList.size() - 1; i >= 0; i--) {
+//            if (!unique.contains(tribesList.get(i).getVertexValue())) {
+//                unique.add(tribesList.get(i).getVertexValue());
+//            } else if (tribesList.get(i).getNeighbors().isEmpty()) {
+//                indexesToDelete.add(i);
+//            }
+//        }
+//
+//        for (int i = indexesToDelete.size() - 1; i >= 0; i--) {
+//            int remove_index = indexesToDelete.get(i);
+//            tribesList.remove(remove_index);
+//        }
 
-        for (List<DirectedGraphNode> elements : connectedComponents(unique)) {
+        List<List<DirectedGraphNode>> superList;
+        superList = connectedComponents(tribesList);
+
+        for (List<DirectedGraphNode> elements : superList) {
             System.out.println("Tribe " + counter);
             for (DirectedGraphNode element : elements) {
                 String outputElement = (element == elements.get(elements.size() - 1)) ? Integer.toString(element.getVertexValue()) : (Integer.toString(element.getVertexValue()) + " -> ");
@@ -124,6 +181,22 @@ public class ConnectedComponents {
             counter++;
             System.out.println();
         }
+
+        for (List<DirectedGraphNode> tribe : superList) {
+            for (DirectedGraphNode woman : tribe) {
+                for (List<DirectedGraphNode> anotherTribe : superList) {
+                    if (tribe != anotherTribe) {
+                        for (DirectedGraphNode man : anotherTribe) {
+                            if ((woman.getVertexValue() % 2 == 0) && (man.getVertexValue() % 2 == 1)) {
+                                couplesNumber++;
+                                System.out.printf("Couple %d: %d/%d \n", couplesNumber, woman.getVertexValue(), man.getVertexValue());
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        System.out.printf("\nFinal amount of couples: %d", couplesNumber);
 
     }
 }
