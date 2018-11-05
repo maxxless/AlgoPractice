@@ -45,10 +45,10 @@ public class TribesWedding {
 
     private static boolean isInGraph(Vertex rootVertex, int processVertexValue) {
         makeUnvisited(uniqueVertices);
-        return checkIfListContainsGraph(rootVertex, processVertexValue);
+        return checkIfGraphContainsVertex(rootVertex, processVertexValue);
     }
 
-    private static boolean checkIfListContainsGraph(Vertex rootVertex, int processVertexValue) {
+    private static boolean checkIfGraphContainsVertex(Vertex rootVertex, int processVertexValue) {
         if (rootVertex.value == processVertexValue) {
             return true;
         }
@@ -57,7 +57,7 @@ public class TribesWedding {
         rootVertex.visited = true;
         for (Vertex n : neighbours) {
             if (n != null && !n.visited) {
-                if (checkIfListContainsGraph(n, processVertexValue)) {
+                if (checkIfGraphContainsVertex(n, processVertexValue)) {
                     return true;
                 }
             }
@@ -89,16 +89,16 @@ public class TribesWedding {
 
     private static void printGraphTree(Vertex rootVertex) {
         makeUnvisited(uniqueVertices);
-        printRootGraphAndItsNeighbours(rootVertex);
+        printRootVertexAndItsNeighbours(rootVertex);
     }
 
-    private static void printRootGraphAndItsNeighbours(Vertex rootVertex) {
+    private static void printRootVertexAndItsNeighbours(Vertex rootVertex) {
         System.out.print(rootVertex.value + " ");
         List<Vertex> neighbours = rootVertex.getNeighbours();
         rootVertex.visited = true;
         for (Vertex vertex : neighbours) {
             if (vertex != null && !vertex.visited) {
-                printRootGraphAndItsNeighbours(vertex);
+                printRootVertexAndItsNeighbours(vertex);
             }
         }
     }
