@@ -34,10 +34,8 @@ public class TribesWedding {
         return tribesList;
     }
 
-
     private static List<Vertex> allTribesVertices = new ArrayList<>();
     private static List<Vertex> uniqueVertices = new ArrayList<>();
-
 
     private static void makeUnvisited(List<Vertex> list) {
         for (Vertex vertex : list) {
@@ -45,22 +43,21 @@ public class TribesWedding {
         }
     }
 
-
-    private static boolean isInGraph(Vertex vertex, int value) {
+    private static boolean isInGraph(Vertex rootVertex, int processVertexValue) {
         makeUnvisited(uniqueVertices);
-        return dfs(vertex, value);
+        return checkIfListContainsGraph(rootVertex, processVertexValue);
     }
 
-    private static boolean dfs(Vertex vertex, int value) {
-        if (vertex.value == value) {
+    private static boolean checkIfListContainsGraph(Vertex rootVertex, int processVertexValue) {
+        if (rootVertex.value == processVertexValue) {
             return true;
         }
 
-        List<Vertex> neighbours = vertex.getNeighbours();
-        vertex.visited = true;
+        List<Vertex> neighbours = rootVertex.getNeighbours();
+        rootVertex.visited = true;
         for (Vertex n : neighbours) {
             if (n != null && !n.visited) {
-                if (dfs(n, value)) {
+                if (checkIfListContainsGraph(n, processVertexValue)) {
                     return true;
                 }
             }
@@ -68,59 +65,57 @@ public class TribesWedding {
         return false;
     }
 
-
-    private static Vertex getVertexByValueFromGraph(Vertex vertex, int value) {
+    private static Vertex getVertexByValueFromGraph(Vertex rootVertex, int processVertexValue) {
         makeUnvisited(uniqueVertices);
-        return dfsWithNeighbours(vertex, value);
+        return processVertexNeighbours(rootVertex, processVertexValue);
 
     }
 
-    private static Vertex dfsWithNeighbours(Vertex vertex, int value) {
-        if (vertex.value == value) {
-            return vertex;
+    private static Vertex processVertexNeighbours(Vertex rootVertex, int processVertexValue) {
+        if (rootVertex.value == processVertexValue) {
+            return rootVertex;
         }
 
-        List<Vertex> neighbours = vertex.getNeighbours();
-        vertex.visited = true;
-        for (Vertex n : neighbours) {
-            if (n != null && !n.visited) {
-                Vertex foundVertex = dfsWithNeighbours(n, value);
+        List<Vertex> neighbours = rootVertex.getNeighbours();
+        rootVertex.visited = true;
+        for (Vertex vertex : neighbours) {
+            if (vertex != null && !vertex.visited) {
+                Vertex foundVertex = processVertexNeighbours(vertex, processVertexValue);
                 if (foundVertex != null) return foundVertex;
             }
         }
         return null;
     }
 
-
-    private static void printGraphTree(Vertex vertex) {
+    private static void printGraphTree(Vertex rootVertex) {
         makeUnvisited(uniqueVertices);
-        dfsForPrint(vertex);
+        printRootGraphAndItsNeighbours(rootVertex);
     }
 
-    private static void dfsForPrint(Vertex vertex) {
-        System.out.print(vertex.value + " ");
-        List<Vertex> neighbours = vertex.getNeighbours();
-        vertex.visited = true;
-        for (Vertex n : neighbours) {
-            if (n != null && !n.visited) {
-                dfsForPrint(n);
+    private static void printRootGraphAndItsNeighbours(Vertex rootVertex) {
+        System.out.print(rootVertex.value + " ");
+        List<Vertex> neighbours = rootVertex.getNeighbours();
+        rootVertex.visited = true;
+        for (Vertex vertex : neighbours) {
+            if (vertex != null && !vertex.visited) {
+                printRootGraphAndItsNeighbours(vertex);
             }
         }
     }
 
-    private static List<Integer> returnGraphAsList(Vertex vertex) {
+    private static List<Integer> returnGraphAsList(Vertex rootVertex) {
         makeUnvisited(uniqueVertices);
         List<Integer> result = new ArrayList<>();
-        return dfsToGetList(vertex, result);
+        return getGraphList(rootVertex, result);
     }
 
-    private static List<Integer> dfsToGetList(Vertex vertex, List<Integer> result) {
-        result.add(vertex.value);
-        List<Vertex> neighbours = vertex.getNeighbours();
-        vertex.visited = true;
-        for (Vertex n : neighbours) {
-            if (n != null && !n.visited) {
-                result = dfsToGetList(n, result);
+    private static List<Integer> getGraphList(Vertex rootVertex, List<Integer> result) {
+        result.add(rootVertex.value);
+        List<Vertex> neighbours = rootVertex.getNeighbours();
+        rootVertex.visited = true;
+        for (Vertex vertex : neighbours) {
+            if (vertex != null && !vertex.visited) {
+                result = getGraphList(vertex, result);
             }
         }
         return result;
@@ -195,7 +190,6 @@ public class TribesWedding {
             }
         }
     }
-
 
     private static List<List<Integer>> countMenAndWomen(List<Vertex> vertexList) {
         List<List<Integer>> result = new ArrayList<>();
