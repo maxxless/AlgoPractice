@@ -35,31 +35,30 @@ public class TribesWedding {
     }
 
 
-    private static List<Graph> tribesValues = new ArrayList<>();
-    private static List<Graph> uniqueGraphs = new ArrayList<>();
+    private static List<Vertex> allTribesVertices = new ArrayList<>();
+    private static List<Vertex> uniqueVertices = new ArrayList<>();
 
 
-    private static void makeUnvisited(List<Graph> list) {
-        for (Graph aList : list) {
-            aList.visited = false;
+    private static void makeUnvisited(List<Vertex> list) {
+        for (Vertex vertex : list) {
+            vertex.visited = false;
         }
     }
 
 
-    // returns true element with this value exits in graph
-    private static boolean mDfs(Graph graph, int value) {
-        makeUnvisited(uniqueGraphs);
-        return dfs(graph, value);
+    private static boolean isInGraph(Vertex vertex, int value) {
+        makeUnvisited(uniqueVertices);
+        return dfs(vertex, value);
     }
 
-    private static boolean dfs(Graph graph, int value) {
-        if (graph.node == value) {
+    private static boolean dfs(Vertex vertex, int value) {
+        if (vertex.value == value) {
             return true;
         }
 
-        List<Graph> neighbours = graph.getNeighbours();
-        graph.visited = true;
-        for (Graph n : neighbours) {
+        List<Vertex> neighbours = vertex.getNeighbours();
+        vertex.visited = true;
+        for (Vertex n : neighbours) {
             if (n != null && !n.visited) {
                 if (dfs(n, value)) {
                     return true;
@@ -70,121 +69,116 @@ public class TribesWedding {
     }
 
 
-    // returns an Graph element with this value from graph
-    private static Graph mDfsByValue(Graph graph, int value) {
-        makeUnvisited(uniqueGraphs);
-        return dfsByValue(graph, value);
+    private static Vertex getVertexByValueFromGraph(Vertex vertex, int value) {
+        makeUnvisited(uniqueVertices);
+        return dfsWithNeighbours(vertex, value);
 
     }
 
-    private static Graph dfsByValue(Graph graph, int value) {
-        if (graph.node == value) {
-            return graph;
+    private static Vertex dfsWithNeighbours(Vertex vertex, int value) {
+        if (vertex.value == value) {
+            return vertex;
         }
 
-        List<Graph> neighbours = graph.getNeighbours();
-        graph.visited = true;
-        for (Graph n : neighbours) {
+        List<Vertex> neighbours = vertex.getNeighbours();
+        vertex.visited = true;
+        for (Vertex n : neighbours) {
             if (n != null && !n.visited) {
-                Graph foundGraph = dfsByValue(n, value);
-                if (foundGraph != null) return foundGraph;
+                Vertex foundVertex = dfsWithNeighbours(n, value);
+                if (foundVertex != null) return foundVertex;
             }
         }
         return null;
     }
 
 
-    // just prints all the graph elements using dfs
-    private static void mDfsPrint(Graph graph) {
-        makeUnvisited(uniqueGraphs);
-        dfsPrint(graph);
+    private static void printGraphTree(Vertex vertex) {
+        makeUnvisited(uniqueVertices);
+        dfsForPrint(vertex);
     }
 
-    private static void dfsPrint(Graph graph) {
-        System.out.print(graph.node + " ");
-        List<Graph> neighbours = graph.getNeighbours();
-        graph.visited = true;
-        for (Graph n : neighbours) {
+    private static void dfsForPrint(Vertex vertex) {
+        System.out.print(vertex.value + " ");
+        List<Vertex> neighbours = vertex.getNeighbours();
+        vertex.visited = true;
+        for (Vertex n : neighbours) {
             if (n != null && !n.visited) {
-                dfsPrint(n);
+                dfsForPrint(n);
             }
         }
     }
 
-
-    //returns graph as list
-    private static List<Integer> mDfsGetList(Graph graph) {
-        makeUnvisited(uniqueGraphs);
+    private static List<Integer> returnGraphAsList(Vertex vertex) {
+        makeUnvisited(uniqueVertices);
         List<Integer> result = new ArrayList<>();
-        return dfsGetList(graph, result);
+        return dfsToGetList(vertex, result);
     }
 
-    private static List<Integer> dfsGetList(Graph graph, List<Integer> result) {
-        result.add(graph.node);
-        List<Graph> neighbours = graph.getNeighbours();
-        graph.visited = true;
-        for (Graph n : neighbours) {
+    private static List<Integer> dfsToGetList(Vertex vertex, List<Integer> result) {
+        result.add(vertex.value);
+        List<Vertex> neighbours = vertex.getNeighbours();
+        vertex.visited = true;
+        for (Vertex n : neighbours) {
             if (n != null && !n.visited) {
-                result = dfsGetList(n, result);
+                result = dfsToGetList(n, result);
             }
         }
         return result;
     }
 
-
-    private static void fromArrayToGraphs(List<List<Integer>> array) {
-        for (List<Integer> anArray : array) {
-            int node1 = anArray.get(0);
-            int node2 = anArray.get(1);
+    private static void fromArrayToGraphs(List<List<Integer>> graphList) {
+        for (List<Integer> graphCouple : graphList) {
+            int vertex1 = graphCouple.get(0);
+            int vertex2 = graphCouple.get(1);
             boolean wasAdded = false;
             int addedIndex = -1;
 
             outer:
-            for (int j = 0; j < tribesValues.size(); j++) {
-                Graph head = tribesValues.get(j);
+            for (int j = 0; j < allTribesVertices.size(); j++) {
+                Vertex currentVertex = allTribesVertices.get(j);
 
-                if (mDfs(head, node1)) {
+                if (isInGraph(currentVertex, vertex1)) {
                     if (wasAdded) {
-                        Graph graph = mDfsByValue(tribesValues.get(addedIndex), node1);
-                        graph.addNeighbour(head.getNeighbours().get(0));
-                        tribesValues.remove(j);
+                        Vertex tempVertex = getVertexByValueFromGraph(allTribesVertices.get(addedIndex), vertex1);
+                        tempVertex.addNeighbour(tempVertex.getNeighbours().get(0));
+                        allTribesVertices.remove(j);
                         break;
                     }
 
-                    for (int k = j + 1; k < tribesValues.size(); k++) {
-                        if (mDfs(tribesValues.get(k), node2)) {
-                            head.addNeighbour(tribesValues.get(k));
-                            tribesValues.remove(k);
+                    for (int k = j + 1; k < allTribesVertices.size(); k++) {
+                        if (isInGraph(allTribesVertices.get(k), vertex2)) {
+                            currentVertex.addNeighbour(allTribesVertices.get(k));
+                            allTribesVertices.remove(k);
                             wasAdded = true;
                             break outer;
                         }
                     }
 
-                    Graph n = new Graph(node2);
-                    mDfsByValue(head, node1).addNeighbour(n);
+                    Vertex vertexTo = new Vertex(vertex2);
+                    getVertexByValueFromGraph(currentVertex, vertex1).addNeighbour(vertexTo);
 
 
                     addedIndex = j;
                     wasAdded = true;
-                } else if (mDfs(head, node2)) {
+                } else if (isInGraph(currentVertex, vertex2)) {
                     if (wasAdded) {
-                        Graph graph = mDfsByValue(tribesValues.get(addedIndex), node2);
-                        graph.addNeighbour(head.getNeighbours().get(0));
-                        tribesValues.remove(j);
+                        Vertex vertex = getVertexByValueFromGraph(allTribesVertices.get(addedIndex), vertex2);
+                        vertex.addNeighbour(vertex.getNeighbours().get(0));
+                        allTribesVertices.remove(j);
                         break;
                     }
 
-                    for (int k = j + 1; k < tribesValues.size(); k++) {
-                        if (mDfs(tribesValues.get(k), node1)) {
-                            head.addNeighbour(tribesValues.get(k));
+                    for (int k = j + 1; k < allTribesVertices.size(); k++) {
+                        if (isInGraph(allTribesVertices.get(k), vertex1)) {
+                            currentVertex.addNeighbour(allTribesVertices.get(k));
                             wasAdded = true;
-                            tribesValues.remove(k);
+                            allTribesVertices.remove(k);
                             break outer;
                         }
                     }
 
-                    Graph n = new Graph(node1);
-                    mDfsByValue(head, node2).addNeighbour(n);
+                    Vertex vertexFrom = new Vertex(vertex1);
+                    getVertexByValueFromGraph(currentVertex, vertex2).addNeighbour(vertexFrom);
 
 
                     wasAdded = true;
@@ -193,32 +187,32 @@ public class TribesWedding {
             }
 
             if (!wasAdded) {
-                Graph n1 = new Graph(node1);
-                Graph n2 = new Graph(node2);
-                n1.addNeighbour(n2);
+                Vertex vertexFrom = new Vertex(vertex1);
+                Vertex vertexTo = new Vertex(vertex2);
+                vertexFrom.addNeighbour(vertexTo);
 
-                tribesValues.add(n1);
+                allTribesVertices.add(vertexFrom);
             }
         }
     }
 
 
-    private static List<List<Integer>> countMenAndWomen(List<Graph> graphList) {
+    private static List<List<Integer>> countMenAndWomen(List<Vertex> vertexList) {
         List<List<Integer>> result = new ArrayList<>();
 
-        for (Graph nodesList : graphList) {
-            List<Integer> tribe = mDfsGetList(nodesList);
+        for (Vertex nodesList : vertexList) {
+            List<Integer> tribe = returnGraphAsList(nodesList);
 
             List<Integer> tribePeople = new ArrayList<>();
             tribePeople.add(0);
             tribePeople.add(0);
             for (Integer elem : tribe) {
                 if (elem % 2 == 0) {
-                    int man = tribePeople.get(0) + 1;
-                    tribePeople.set(0, man);
+                    int manNumber = tribePeople.get(0) + 1;
+                    tribePeople.set(0, manNumber);
                 } else {
-                    int woman = tribePeople.get(1) + 1;
-                    tribePeople.set(1, woman);
+                    int womenNumber = tribePeople.get(1) + 1;
+                    tribePeople.set(1, womenNumber);
                 }
             }
             result.add(tribePeople);
@@ -228,16 +222,16 @@ public class TribesWedding {
     }
 
     private static Integer countPairs(List<List<Integer>> listOfMenAndWomen) {
-        int pairs = 0;
+        int pairsNumber = 0;
 
         for (int i = 0; i < listOfMenAndWomen.size(); i++) {
             for (int j = i + 1; j < listOfMenAndWomen.size(); j++) {
-                pairs += listOfMenAndWomen.get(i).get(0) * listOfMenAndWomen.get(j).get(1);
-                pairs += listOfMenAndWomen.get(i).get(1) * listOfMenAndWomen.get(j).get(0);
+                pairsNumber += listOfMenAndWomen.get(i).get(0) * listOfMenAndWomen.get(j).get(1);
+                pairsNumber += listOfMenAndWomen.get(i).get(1) * listOfMenAndWomen.get(j).get(0);
             }
         }
 
-        return pairs;
+        return pairsNumber;
     }
 
     public static void main(String[] args) {
@@ -245,35 +239,35 @@ public class TribesWedding {
 
         int counter = 1;
 
-        for (Graph tribesHead : tribesValues) {
+        for (Vertex tribesHead : allTribesVertices) {
             System.out.println("Tribe " + counter + ": ");
-            mDfsPrint(tribesHead);
+            printGraphTree(tribesHead);
             counter++;
             System.out.println();
         }
 
-        List<List<Integer>> menAndWomen = countMenAndWomen(tribesValues);
+        List<List<Integer>> menAndWomen = countMenAndWomen(allTribesVertices);
 
         System.out.format("\nAll possible pairs: %d ", countPairs(menAndWomen));
     }
 
-    static class Graph {
-        int node;
+    static class Vertex {
+        int value;
         boolean visited;
-        List<Graph> neighbours;
+        List<Vertex> neighbours;
 
-        Graph(int node) {
-            this.node = node;
+        Vertex(int value) {
+            this.value = value;
             this.neighbours = new ArrayList<>();
 
-            uniqueGraphs.add(this);
+            uniqueVertices.add(this);
         }
 
-        void addNeighbour(Graph neighbourGraph) {
-            this.neighbours.add(neighbourGraph);
+        void addNeighbour(Vertex neighbourVertex) {
+            this.neighbours.add(neighbourVertex);
         }
 
-        List<Graph> getNeighbours() {
+        List<Vertex> getNeighbours() {
             return neighbours;
         }
     }
