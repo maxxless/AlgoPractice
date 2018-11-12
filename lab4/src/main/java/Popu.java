@@ -1,18 +1,18 @@
 public class Popu {
     public int countDoubleFriends(String[] friends) {
         int doubleFriendsNumber = 0;
-        for (int i = 0; i < friends.length; i++) {
+        for (int rawIndex = 0; rawIndex < friends.length; rawIndex++) {
             int connectionsNumber = 0;
-            for (int j = 0; j < friends.length; j++) {
-                if (i == j)
+            for (int columnIndex = 0; columnIndex < friends.length; columnIndex++) {
+                if (rawIndex == columnIndex)
                     continue;
-                if (friends[i].charAt(j) == 'Y') {
+                if (friends[rawIndex].charAt(columnIndex) == 'Y') {
                     connectionsNumber++;
                 } else {
                     for (int tempIndex = 0; tempIndex < friends.length; tempIndex++) {
-                        if (i == tempIndex || j == tempIndex)
+                        if (rawIndex == tempIndex || columnIndex == tempIndex)
                             continue;
-                        if (friends[i].charAt(tempIndex) == 'Y' && friends[j].charAt(tempIndex) == 'Y') {
+                        if (friends[rawIndex].charAt(tempIndex) == 'Y' && friends[columnIndex].charAt(tempIndex) == 'Y') {
                             connectionsNumber++;
                             break;
                         }
