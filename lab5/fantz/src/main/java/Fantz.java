@@ -2,43 +2,47 @@ import static java.lang.Math.log;
 import static java.lang.Math.min;
 import static java.lang.Math.pow;
 
-public class Fantz {
-    private final static long infinity = Integer.MAX_VALUE;
+
+public final class Fantz {
+    private final static int INFINITY = Integer.MAX_VALUE;
+
+    private final static String binaryString = "101101101";
+    private final static int maxElementNumber = binaryString.length();
+    private final static int baseValue = 5;
 
     private static int findMinimalAmountOfPieces(int baseValue, String binaryString) {
-        long[] arrayOfCounters = new long[binaryString.length() + 1];
+        int[] arrayOfCounters = new int[maxElementNumber + 1];
         arrayOfCounters[0] = 0;
 
-        for (int charIndexInString = 1; charIndexInString <= binaryString.length(); charIndexInString++) {
-            arrayOfCounters[charIndexInString] = infinity;
+        for (int charIndex = 1; charIndex <= maxElementNumber; charIndex++) {
+            arrayOfCounters[charIndex] = INFINITY;
 
-            for (int subStringIndex = 1; subStringIndex <= charIndexInString; subStringIndex++) {
+            for (int subStringIndex = 1; subStringIndex <= charIndex; subStringIndex++) {
                 if (binaryString.charAt(subStringIndex - 1) == '0') {
                     continue;
                 }
 
-                int tempNumberFromSeparatedString = Integer.parseInt(binaryString.substring(subStringIndex - 1, charIndexInString), 2);
-                if (checkIfNumberIsPowerOfBaseValue(tempNumberFromSeparatedString, baseValue)) {
-                    arrayOfCounters[charIndexInString] = min(arrayOfCounters[charIndexInString], arrayOfCounters[subStringIndex - 1] + 1);
+                int tempBinaryPiece = Integer.parseInt(binaryString.substring(subStringIndex - 1, charIndex), 2);
+                if (checkIfNumberIsAPower(tempBinaryPiece, baseValue)) {
+                    arrayOfCounters[charIndex] = min(arrayOfCounters[charIndex], arrayOfCounters[subStringIndex - 1] + 1);
                 }
             }
         }
-        int result = (arrayOfCounters[binaryString.length()] == infinity) ? -1 : (int) arrayOfCounters[binaryString.length()];
-        return result;
+        return (arrayOfCounters[maxElementNumber] == INFINITY) ? -1 : arrayOfCounters[maxElementNumber];
     }
 
-    private static boolean checkIfNumberIsPowerOfBaseValue(long value, int baseValue) {
+    private static boolean checkIfNumberIsAPower(int value, int baseValue) {
         if (value == 0) {
             return false;
         }
 
-        int number = (int) (log(value) / log(baseValue));
+        double number = log(value) / log(baseValue);
         return pow(baseValue, number) == value;
     }
 
     public static void main(String[] args) {
-        int baseValue = 5;
-        String binaryString = "101101101";
-        System.out.println(findMinimalAmountOfPieces(baseValue, binaryString));
+        int result = (!binaryString.contains("0")) ? maxElementNumber : findMinimalAmountOfPieces(baseValue, binaryString);
+
+        System.out.println(result);
     }
 }
