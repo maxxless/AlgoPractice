@@ -33,7 +33,7 @@ public class Fantz {
         }
 
         int number = (int) (log(value) / log(baseValue));
-        return pow(5, number) == value;
+        return pow(baseValue, number) == value;
     }
 
     public static void main(String[] args) {
