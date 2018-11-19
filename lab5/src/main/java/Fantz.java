@@ -4,31 +4,46 @@ import static java.lang.Math.pow;
 
 
 public final class Fantz {
-    private final static int INFINITY = Integer.MAX_VALUE;
-
-    private final static String BINARY_STRING = "101101101";
-    private final static int MAX_ELEMENT_NUMBER = BINARY_STRING.length();
     private final static int BASE_VALUE = 5;
+    private final static String BINARY_STRING = "101101101";
 
     private static int findMinimalAmountOfPieces(int baseValue, String binaryString) {
-        int[] arrayOfCounters = new int[MAX_ELEMENT_NUMBER + 1];
+        char[] chars = binaryString.toCharArray();
+        boolean hasZeros = false;
+
+        for (char aChar : chars) {
+            if (aChar == '0') {
+                hasZeros = true;
+                break;
+            }
+        }
+
+        if (!hasZeros) {
+            return chars.length;
+        }
+
+        int[] arrayOfCounters = new int[chars.length + 1];
         arrayOfCounters[0] = 0;
 
-        for (int charIndex = 1; charIndex <= MAX_ELEMENT_NUMBER; charIndex++) {
-            arrayOfCounters[charIndex] = INFINITY;
+        for (int charIndex = 1; charIndex <= chars.length; charIndex++) {
+            arrayOfCounters[charIndex] = Integer.MAX_VALUE;
 
             for (int subStringIndex = 1; subStringIndex <= charIndex; subStringIndex++) {
-                if (binaryString.charAt(subStringIndex - 1) == '0') {
+                if (chars[subStringIndex - 1] == '0') {
                     continue;
                 }
 
-                int tempNumberFromBinaryPiece = Integer.parseInt(binaryString.substring(subStringIndex - 1, charIndex), 2);
+//                char[] tempCharArray = new char[charIndex - subStringIndex + 1];
+//                System.arraycopy(chars, subStringIndex - 1, tempCharArray, subStringIndex - 1, charIndex - (subStringIndex - 1));
+
+                int tempNumberFromBinaryPiece = Integer.parseInt(String.valueOf(chars, subStringIndex - 1, charIndex - subStringIndex + 1), 2);
+
                 if (checkIfNumberIsAPower(tempNumberFromBinaryPiece, baseValue)) {
                     arrayOfCounters[charIndex] = min(arrayOfCounters[charIndex], arrayOfCounters[subStringIndex - 1] + 1);
                 }
             }
         }
-        return (arrayOfCounters[MAX_ELEMENT_NUMBER] == INFINITY) ? -1 : arrayOfCounters[MAX_ELEMENT_NUMBER];
+        return (arrayOfCounters[chars.length] == Integer.MAX_VALUE) ? -1 : arrayOfCounters[chars.length];
     }
 
     private static boolean checkIfNumberIsAPower(int value, int baseValue) {
@@ -41,8 +56,6 @@ public final class Fantz {
     }
 
     public static void main(String[] args) {
-        int result = (!BINARY_STRING.contains("0")) ? MAX_ELEMENT_NUMBER : findMinimalAmountOfPieces(BASE_VALUE, BINARY_STRING);
-
-        System.out.println(result);
+        System.out.println(findMinimalAmountOfPieces(BASE_VALUE, BINARY_STRING));
     }
 }
